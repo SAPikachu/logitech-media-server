@@ -185,10 +185,13 @@ sub trackDetails {
 	
 	if ( my $coverid = ($track->{coverid} || $track->{'tracks.coverid'}) ) {
 		if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
+			# Offer original image first
+			$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover", $request_addr) . '</upnp:albumArtURI>';
 			# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+			$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_LRG" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+				. absURL("/music/$coverid/cover_4096x4096_F.jpg", $request_addr) . '</upnp:albumArtURI>';
 			$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
 				. absURL("/music/$coverid/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
-			$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover", $request_addr) . '</upnp:albumArtURI>';
 		}
 	}
 	
@@ -335,10 +338,13 @@ sub videoDetails {
 	# DLNA 7.3.60 specifies that image/video thumbnails should be provided in a separate <res> item, but a lot
 	# of clients need albumArtURI. We will return both methods
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
+		# Offer original image first
+		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover", $request_addr) . '</upnp:albumArtURI>';
 		# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_LRG" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+			. absURL("/video/${hash}/cover_4096x4096_F.jpg", $request_addr) . '</upnp:albumArtURI>';
 		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
 			. absURL("/video/${hash}/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
-		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover", $request_addr) . '</upnp:albumArtURI>';
 	}
 	
 	# mtime is used for all values as fallback
@@ -390,6 +396,12 @@ sub videoDetails {
 		$xml .= '>' . absURL("/video/${hash}/download", $request_addr) . '</res>';
 		
 		# DLNA 7.3.60, provide video thumbnails as <res> items
+		$xml .= '<res protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_LRG;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/video/${hash}/cover_4096x4096_F.jpg", $request_addr)
+			. '</res>';
+		$xml .= '<res protocolInfo="http-get:*:image/png:DLNA.ORG_PN=PNG_LRG;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/video/${hash}/cover_4096x4096_F.png", $request_addr)
+			. '</res>';
 		$xml .= '<res protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
 			. absURL("/video/${hash}/cover_160x160_m.jpg", $request_addr)
 			. '</res>';
@@ -434,6 +446,10 @@ sub imageDetails {
 	# of clients need albumArtURI. We will return both methods
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
 		# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_LRG" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+			. absURL("/image/${hash}/cover_4096x4096_F.jpg", $request_addr) . '</upnp:albumArtURI>';
+		$xml .= '<upnp:albumArtURI dlna:profileID="PNG_LRG" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+			. absURL("/image/${hash}/cover_4096x4096_F.png", $request_addr) . '</upnp:albumArtURI>';
 		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
 			. absURL("/image/${hash}/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
 		$xml .= '<upnp:albumArtURI dlna:profileID="PNG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
@@ -507,6 +523,12 @@ sub imageDetails {
 		}
 		
 		# DLNA 7.3.60, provide image thumbnails as <res> items
+		$xml .= '<res protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_LRG;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/image/${hash}/cover_4096x4096_F.jpg", $request_addr)
+			. '</res>';
+		$xml .= '<res protocolInfo="http-get:*:image/png:DLNA.ORG_PN=PNG_LRG;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/image/${hash}/cover_4096x4096_F.png", $request_addr)
+			. '</res>';
 		$xml .= '<res protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
 			. absURL("/image/${hash}/cover_160x160_m.jpg", $request_addr)
 			. '</res>';
