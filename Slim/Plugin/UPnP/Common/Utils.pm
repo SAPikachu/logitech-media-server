@@ -228,8 +228,8 @@ sub trackDetails {
 			push @other_types, 'audio/x-flac';
 		}
 		if ( $content_type !~ /^(?:mp3|aif|pcm|wav)$/ ) {
-			push @other_types, 'audio/mpeg' if HAS_LAME();
 			push @other_types, 'audio/L16';
+			push @other_types, 'audio/mpeg' if HAS_LAME();
 		}
 		else {
 			# Fix PCM type string
