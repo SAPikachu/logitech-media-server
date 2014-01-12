@@ -129,6 +129,7 @@ sub findStandaloneArtwork {
 			my $files = File::Next::files( {
 				file_filter    => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types, undef, 1) },
 				descend_filter => sub { 0 },
+				sort_files     => 1,
 			}, $parentDir );
 	
 			my @found;
