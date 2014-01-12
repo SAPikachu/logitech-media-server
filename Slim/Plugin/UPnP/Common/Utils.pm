@@ -224,6 +224,9 @@ sub trackDetails {
 		
 		# Setup transcoding formats for non-PCM/MP3 content
 		my @other_types;
+		if ( $content_type eq 'ape' ) {
+			push @other_types, 'audio/x-flac';
+		}
 		if ( $content_type !~ /^(?:mp3|aif|pcm|wav)$/ ) {
 			push @other_types, 'audio/mpeg' if HAS_LAME();
 			push @other_types, 'audio/L16';
@@ -239,6 +242,9 @@ sub trackDetails {
 			my $dlna;
 			my $ext = Slim::Music::Info::mimeToType($type);
 			
+			if ( $ext eq 'ape' ) {
+				next; # APE support is problematic, don't offer it
+			}
 			if ( $type eq $native_type ) {
 				my $profile = $track->{dlna_profile} || $track->{'tracks.dlna_profile'};
 				if ( $profile ) {
@@ -259,6 +265,13 @@ sub trackDetails {
 					$dlna = 'DLNA.ORG_PN=LPCM;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
 					
 					$ext = 'aif';
+					$type .= ';rate=' . ($track->{samplerate} || $track->{'tracks.samplerate'})
+						. ';channels=' . ($track->{channels} || $track->{'tracks.channels'});
+				}
+				elsif ( $type eq 'audio/x-flac' ) {
+					$dlna = 'DLNA.ORG_PN=FLAC;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
+					
+					$ext = 'flc';
 					$type .= ';rate=' . ($track->{samplerate} || $track->{'tracks.samplerate'})
 						. ';channels=' . ($track->{channels} || $track->{'tracks.channels'});
 				}
