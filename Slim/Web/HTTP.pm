@@ -2644,7 +2644,7 @@ sub downloadMusicFile {
 			$outFormat = 'flc' if $outFormat eq 'flac';
 			$outFormat = 'wvp' if $outFormat eq 'wv';
 			
-			if ( $obj->content_type ne $outFormat ) {
+			if ( $obj->content_type ne $outFormat || $obj->virtual ) {
 				if ( main::TRANSCODING ) {
 					# Also support LAME bitrate/quality
 					my ($bitrate) = $uri =~ m{bitrate=(\d+)};
