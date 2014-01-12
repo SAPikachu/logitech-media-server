@@ -241,6 +241,7 @@ sub trackDetails {
 		for my $type ( $native_type, @other_types ) {
 			my $dlna;
 			my $ext = Slim::Music::Info::mimeToType($type);
+			$ext = 'wv' if $ext eq 'wvp';
 			
 			if ( $ext eq 'ape' ) {
 				next; # APE support is problematic, don't offer it

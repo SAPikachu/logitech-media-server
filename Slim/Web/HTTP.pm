@@ -2642,6 +2642,7 @@ sub downloadMusicFile {
 		
 		if ( my ($outFormat) = $uri =~ m{download\.([^\?]+)} ) {				
 			$outFormat = 'flc' if $outFormat eq 'flac';
+			$outFormat = 'wvp' if $outFormat eq 'wv';
 			
 			if ( $obj->content_type ne $outFormat ) {
 				if ( main::TRANSCODING ) {
